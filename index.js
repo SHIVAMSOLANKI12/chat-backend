@@ -1,35 +1,47 @@
-//const express = require('express') -- method-1
-import express from "express"; // method - 2
+import express from "express";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import http from "http";
+
 import connectDB from "./config/database.js";
 import userRoute from "./routes/userRoute.js";
 import messageRoute from "./routes/messageRoute.js";
-import cookieParser from "cookie-parser";
-import cors from "cors";
-import { app, server } from "./socket/socket.js";
+import { initSocket } from "./socket/socket.js";
 
-dotenv.config({});
+dotenv.config();
 
-// const app = express();
+const app = express();
+const server = http.createServer(app);
 
 // middleware
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const corsOption = {
-  origin: "http://localhost:5173",
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://your-frontend.vercel.app"
+  ],
   credentials: true,
-};
-app.use(cors(corsOption));
+}));
 
-const PORT = process.env.PORT || 8080;
+// ✅ TEST ROUTE
+app.get("/", (req, res) => {
+  res.send("Backend is LIVE 🚀");
+});
 
-//routes
+// routes
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/message", messageRoute);
 
-server.listen(PORT, () => {
-  connectDB();
-  console.log(`server listen at port ${PORT}`);
+// socket init
+initSocket(server);
+
+const PORT = process.env.PORT || 8080;
+
+server.listen(PORT, async () => {
+  await connectDB();
+  console.log(`Server running on port ${PORT}`);
 });
