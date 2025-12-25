@@ -18,13 +18,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://your-frontend.vercel.app"
-  ],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://chat-frontend.vercel.app"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  })
+);
 
 // test route
 app.get("/", (req, res) => {
