@@ -6,7 +6,6 @@ import http from "http";
 
 import connectDB from "./config/database.js";
 import userRoute from "./routes/userRoute.js";
-import messageRoute from "./routes/messageRoute.js";
 import { initSocket } from "./socket/socket.js";
 
 dotenv.config();
@@ -24,19 +23,18 @@ app.use(cors({
     "http://localhost:5173",
     "https://your-frontend.vercel.app"
   ],
-  credentials: true,
+  credentials: true
 }));
 
-// ✅ TEST ROUTE
+// test route
 app.get("/", (req, res) => {
   res.send("Backend is LIVE 🚀");
 });
 
 // routes
 app.use("/api/v1/user", userRoute);
-app.use("/api/v1/message", messageRoute);
 
-// socket init
+// socket
 initSocket(server);
 
 const PORT = process.env.PORT || 8080;
